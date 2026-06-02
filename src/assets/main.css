@@ -1,0 +1,83 @@
+/* ===========================
+   Blush Berry — Global Styles
+   =========================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&display=swap');
+
+/* CSS Variables */
+:root {
+  --pink-50: #fff0f6;
+  --pink-100: #ffe4ef;
+  --pink-200: #ffd0e5;
+  --pink-300: #f9a8c9;
+  --pink-400: #f472b6;
+  --pink-500: #e8799a;
+  --pink-600: #d4547a;
+  --pink-700: #b05070;
+  --pink-800: #6b2d47;
+  --pink-900: #3a1528;
+
+  --text-primary: #3a1528;
+  --text-secondary: #6b2d47;
+  --text-muted: #a07080;
+
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+
+  --shadow-sm: 0 2px 12px rgba(200, 100, 140, 0.08);
+  --shadow-md: 0 8px 30px rgba(200, 100, 140, 0.14);
+  --shadow-lg: 0 20px 60px rgba(200, 100, 140, 0.2);
+}
+
+/* Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #fff8fb;
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #fff0f6;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #e8799a;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d4547a;
+}
