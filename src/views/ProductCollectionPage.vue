@@ -14,13 +14,33 @@ export default {
   },
 
   props: {
+    collectionType: {
+      type: String,
+      default: 'category'
+    },
     category: {
       type: String,
+      default: ''
+    },
+    eyebrow: {
+      type: String,
+      default: 'Blush Berry Edit'
+    },
+    title: {
+      type: String,
       required: true
+    },
+    highlight: {
+      type: String,
+      default: ''
     },
     subtitle: {
       type: String,
       required: true
+    },
+    emptyText: {
+      type: String,
+      default: 'No products found.'
     }
   },
 
@@ -39,8 +59,16 @@ export default {
   },
 
   computed: {
-    sortedProducts() {
-      const list = [...this.products]
+    visibleProducts() {
+      let list = [...this.products]
+
+      if (this.collectionType === 'new') {
+        list = list.filter(product => product.isNew)
+      }
+
+      if (this.collectionType === 'sale') {
+        list = list.filter(product => Number(product.discount || 0) > 0 || Number(product.originalPrice || 0) > Number(product.price || 0))
+      }
 
       if (this.sortBy === 'low') {
         list.sort((a, b) => a.price - b.price)
@@ -50,8 +78,12 @@ export default {
         list.sort((a, b) => b.price - a.price)
       }
 
-      if (this.sortBy === 'newest') {
-        list.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      if (this.sortBy === 'newest' || this.collectionType === 'new') {
+        list.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
+      }
+
+      if (this.collectionType === 'sale' && this.sortBy === 'featured') {
+        list.sort((a, b) => Number(b.discount || 0) - Number(a.discount || 0))
       }
 
       return list
@@ -59,15 +91,42 @@ export default {
 
     paginatedProducts() {
       const start = (this.currentPage - 1) * this.itemsPerPage
-      return this.sortedProducts.slice(start, start + this.itemsPerPage)
+      return this.visibleProducts.slice(start, start + this.itemsPerPage)
     },
 
     pageCount() {
-      return Math.max(1, Math.ceil(this.sortedProducts.length / this.itemsPerPage))
+      return Math.max(1, Math.ceil(this.visibleProducts.length / this.itemsPerPage))
+    },
+
+    productLabel() {
+      return this.collectionType === 'category' ? this.title.toLowerCase() : 'collection'
+    },
+
+    heroTitleParts() {
+      if (!this.highlight) {
+        return { before: this.title, highlight: '', after: '' }
+      }
+
+      const index = this.title.toLowerCase().indexOf(this.highlight.toLowerCase())
+
+      if (index === -1) {
+        return { before: this.title, highlight: this.highlight, after: '' }
+      }
+
+      return {
+        before: this.title.slice(0, index),
+        highlight: this.title.slice(index, index + this.highlight.length),
+        after: this.title.slice(index + this.highlight.length)
+      }
     }
   },
 
   watch: {
+    collectionType() {
+      this.currentPage = 1
+      this.loadProducts()
+    },
+
     category() {
       this.currentPage = 1
       this.loadProducts()
@@ -88,7 +147,10 @@ export default {
       this.loadError = ''
 
       try {
-        const data = await apiRequest(`/products?category=${encodeURIComponent(this.category)}`)
+        const path = this.collectionType === 'category' && this.category
+          ? `/products?category=${encodeURIComponent(this.category)}`
+          : '/products'
+        const data = await apiRequest(path)
         this.products = data.products
       } catch (error) {
         this.loadError = error.message
@@ -147,19 +209,21 @@ export default {
   <div class="page">
     <NavBar />
 
-    <main class="category-page">
-      <section class="category-hero">
-        <p class="hero-eyebrow">Blush Berry Edit</p>
-        <h1>{{ category }}</h1>
+    <main class="collection-page">
+      <section class="collection-hero">
+        <p class="hero-eyebrow">{{ eyebrow }}</p>
+        <h1>
+          {{ heroTitleParts.before }}<em v-if="heroTitleParts.highlight">{{ heroTitleParts.highlight }}</em>{{ heroTitleParts.after }}
+        </h1>
         <p>{{ subtitle }}</p>
       </section>
 
-      <section class="category-content">
-        <div class="category-toolbar">
-          <p>{{ sortedProducts.length }} {{ category.toLowerCase() }} product{{ sortedProducts.length !== 1 ? 's' : '' }}</p>
+      <section class="collection-content">
+        <div class="collection-toolbar">
+          <p>{{ visibleProducts.length }} {{ productLabel }} product{{ visibleProducts.length !== 1 ? 's' : '' }}</p>
           <div class="sort-wrap">
-            <label for="category-sort">Sort by</label>
-            <select id="category-sort" v-model="sortBy">
+            <label for="collection-sort">Sort by</label>
+            <select id="collection-sort" v-model="sortBy">
               <option value="featured">Featured</option>
               <option value="newest">Newest</option>
               <option value="low">Price: Low to High</option>
@@ -169,7 +233,7 @@ export default {
         </div>
 
         <div class="product-grid">
-          <p v-if="isLoading" class="empty-state">Loading {{ category.toLowerCase() }} products from MongoDB...</p>
+          <p v-if="isLoading" class="empty-state">Loading products from MongoDB...</p>
           <p v-else-if="loadError" class="empty-state">{{ loadError }}</p>
 
           <ProductCard
@@ -180,13 +244,13 @@ export default {
             @add-to-cart="addToCart"
           />
 
-          <p v-if="!isLoading && !loadError && sortedProducts.length === 0" class="empty-state">
-            No {{ category.toLowerCase() }} products found.
+          <p v-if="!isLoading && !loadError && visibleProducts.length === 0" class="empty-state">
+            {{ emptyText }}
           </p>
         </div>
 
         <paginate
-          v-if="sortedProducts.length > itemsPerPage"
+          v-if="visibleProducts.length > itemsPerPage"
           v-model="currentPage"
           :click-handler="page => (currentPage = page)"
           :container-class="'catalog-pagination'"
@@ -209,18 +273,18 @@ export default {
 
 <style scoped>
 .page {
-  min-height: 100vh;
+  background: #fff8fb;
   display: flex;
   flex-direction: column;
-  background: #fff8fb;
   font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
 }
 
-.category-page {
+.collection-page {
   flex: 1;
 }
 
-.category-hero {
+.collection-hero {
   background: linear-gradient(135deg, #fbeef3 0%, #f5dde8 50%, #ecdceb 100%);
   padding: 6rem 1.5rem 3.5rem;
   text-align: center;
@@ -235,7 +299,7 @@ export default {
   text-transform: uppercase;
 }
 
-.category-hero h1 {
+.collection-hero h1 {
   color: var(--pink-800);
   font-family: 'Cormorant Garamond', serif;
   font-size: clamp(2rem, 5vw, 3.5rem);
@@ -244,20 +308,24 @@ export default {
   margin-bottom: 0.9rem;
 }
 
-.category-hero p:last-child {
+.collection-hero em {
+  color: var(--pink-500);
+}
+
+.collection-hero p:last-child {
   color: var(--text-secondary);
   line-height: 1.7;
   margin: 0 auto;
   max-width: 620px;
 }
 
-.category-content {
+.collection-content {
   margin: 0 auto;
   max-width: 1200px;
   padding: 2rem 1.5rem 4rem;
 }
 
-.category-toolbar {
+.collection-toolbar {
   align-items: center;
   display: flex;
   flex-wrap: wrap;
@@ -266,7 +334,7 @@ export default {
   margin-bottom: 1.25rem;
 }
 
-.category-toolbar p,
+.collection-toolbar p,
 .sort-wrap label {
   color: var(--text-muted);
   font-size: 0.84rem;
@@ -380,7 +448,7 @@ export default {
 }
 
 @media (max-width: 480px) {
-  .category-content {
+  .collection-content {
     padding: 1.25rem 1rem 3rem;
   }
 

@@ -50,7 +50,7 @@ export default {
     </div>
 
     <div class="footer-bottom">
-      <span>© 2025 Blush Berry. Made with 💗 for K-beauty lovers.</span>
+      <span>© 2026 Blush Berry</span>
     </div>
   </footer>
 </template>

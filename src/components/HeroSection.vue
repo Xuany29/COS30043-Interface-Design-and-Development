@@ -5,12 +5,6 @@
     <div class="blob blob-2"></div>
     <div class="blob blob-3"></div>
 
-    <!-- Floating petals -->
-    <div class="petal petal-1">🌸</div>
-    <div class="petal petal-2">🌷</div>
-    <div class="petal petal-3">✿</div>
-    <div class="petal petal-4">🌸</div>
-
     <div class="row g-0 w-100">
       <div class="col-12">
         <div class="hero-content">
@@ -32,27 +26,7 @@
               <div class="col-12">
                 <div class="hero-actions">
                   <router-link to="/shop" class="btn-primary">Shop Now</router-link>
-                  <router-link to="/skincare" class="btn-ghost">Skincare Edit</router-link>
-                </div>
-              </div>
-            </div>
-            <div class="row g-0">
-              <div class="col-12">
-                <div class="hero-stats">
-                  <div class="stat">
-                    <span class="stat-num">200+</span>
-                    <span class="stat-label">Products</span>
-                  </div>
-                  <div class="stat-divider"></div>
-                  <div class="stat">
-                    <span class="stat-num">50k+</span>
-                    <span class="stat-label">Happy Skin Days</span>
-                  </div>
-                  <div class="stat-divider"></div>
-                  <div class="stat">
-                    <span class="stat-num">100%</span>
-                    <span class="stat-label">Cruelty-Free</span>
-                  </div>
+                  <router-link to="/quiz" class="btn-ghost">Skincare Edit</router-link>
                 </div>
               </div>
             </div>
@@ -62,22 +36,21 @@
             <div class="hero-card main-card">
               <div class="card-img-wrap">
                 <img
-                  src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=500&q=80"
-                  alt="Korean skincare products"
+                  src="https://cdn.shopify.com/s/files/1/0274/2789/7419/products/BANILACOCleanItZeroOriginalCleansingBalm100ml_1000x1000.jpg?v=1593009620"
+                  alt="BANILA CO Clean It Zero Cleansing Balm"
                   class="hero-img"
                 />
                 <div class="card-badge">New Arrival ✨</div>
               </div>
               <div class="card-info">
-                <span class="card-brand">COSRX</span>
-                <span class="card-name">Advanced Snail Serum</span>
-                <span class="card-price">RM 89</span>
+                <span class="card-brand">BANILA CO</span>
+                <span class="card-name">Clean It Zero Cleansing Balm</span>
               </div>
             </div>
             <div class="hero-card mini-card mini-1">
               <img
-                src="https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=200&q=80"
-                alt="Blush product"
+                src="https://i.pinimg.com/originals/4d/78/66/4d7866c5f8548c19c48c89bcad2ce2cd.jpg"
+                alt="Romand Juicy Tint"
               />
               <div class="mini-info">
                 <span>ROMAND</span>
@@ -86,8 +59,8 @@
             </div>
             <div class="hero-card mini-card mini-2">
               <img
-                src="https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=200&q=80"
-                alt="Face mask"
+                src="https://luviabeauty.co.ke/wp-content/uploads/2021/07/Laneige-Water-sleeping-mask-yonaamio-1.jpg"
+                alt="Laneige Water Mask"
               />
               <div class="mini-info">
                 <span>LANEIGE</span>
@@ -156,25 +129,6 @@
 @keyframes blobFloat {
   from { transform: translate(0, 0) scale(1); }
   to { transform: translate(20px, -20px) scale(1.05); }
-}
-
-/* Petals */
-.petal {
-  position: absolute;
-  font-size: 1.8rem;
-  opacity: 0.5;
-  animation: petalDrift linear infinite;
-  pointer-events: none;
-}
-
-.petal-1 { top: 15%; left: 8%; animation-duration: 6s; animation-delay: 0s; }
-.petal-2 { top: 25%; right: 12%; animation-duration: 7s; animation-delay: 1.5s; }
-.petal-3 { bottom: 30%; left: 15%; animation-duration: 5s; animation-delay: 0.8s; }
-.petal-4 { top: 60%; right: 6%; animation-duration: 8s; animation-delay: 2s; }
-
-@keyframes petalDrift {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-16px) rotate(15deg); }
 }
 
 /* Hero layout */

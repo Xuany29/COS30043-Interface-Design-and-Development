@@ -57,8 +57,7 @@ const loadError = ref('')
 const tabs = [
   { id: 'all', label: 'All' },
   { id: 'Skincare', label: 'Skincare' },
-  { id: 'Makeup', label: 'Makeup' },
-  { id: 'new', label: 'New Arrivals' },
+  { id: 'Makeup', label: 'Makeup' }
 ]
 
 const filteredProducts = computed(() => {

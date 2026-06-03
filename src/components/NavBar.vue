@@ -240,10 +240,6 @@ onUnmounted(() => {
   height: 110px;
 }
 
-.logo-accent {
-  color: #e8799a;
-}
-
 .nav-links {
   display: flex;
   gap: 2rem;

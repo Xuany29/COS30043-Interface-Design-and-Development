@@ -14,22 +14,48 @@ const router = createRouter({
     { path: '/', component: HomePage },
     // Add more routes as you build them:
     { path: '/shop', component: () => import('./views/ShopPage.vue') },
-    { path: '/new', component: () => import('./views/NewArrivalsPage.vue') },
-    { path: '/sale', component: () => import('./views/SalePage.vue') },
+    {
+      path: '/new',
+      component: () => import('./views/ProductCollectionPage.vue'),
+      props: {
+        collectionType: 'new',
+        eyebrow: 'Fresh drops',
+        title: 'New Arrivals',
+        highlight: 'Arrivals',
+        subtitle: 'Explore the latest Blush Berry products added to the shop.',
+        emptyText: 'No new arrivals yet.'
+      }
+    },
+    {
+      path: '/sale',
+      component: () => import('./views/ProductCollectionPage.vue'),
+      props: {
+        collectionType: 'sale',
+        eyebrow: 'Limited offers',
+        title: 'Sale Picks',
+        highlight: 'Picks',
+        subtitle: 'Discounted beauty picks from your current catalog.',
+        emptyText: 'No sale products right now.'
+      }
+    },
     { path: '/quiz', component: () => import('./views/SkinQuizPage.vue') },
     {
       path: '/skincare',
-      component: () => import('./views/CategoryPage.vue'),
+      component: () => import('./views/ProductCollectionPage.vue'),
       props: {
+        collectionType: 'category',
         category: 'Skincare',
+        title: 'Skincare',
         subtitle: 'Cleansers, serums, moisturizers, and treatment essentials for a healthy glow.'
       }
     },
     {
       path: '/makeup',
-      component: () => import('./views/CategoryPage.vue'),
+      component: () => import('./views/ProductCollectionPage.vue'),
       props: {
+        collectionType: 'category',
         category: 'Makeup',
+        title: 'Makeup',
         subtitle: 'Lip tints, cushions, complexion, and color picks for soft everyday looks.'
       }
     },
