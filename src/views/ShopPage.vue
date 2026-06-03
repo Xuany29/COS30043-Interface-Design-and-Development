@@ -3,12 +3,14 @@ import FooterSection from '@/components/FooterSection.vue'
 import NavBar from '@/components/NavBar.vue'
 import ProductCard from '@/components/ProductCard.vue'
 import { apiRequest } from '@/services/api'
+import Paginate from 'vuejs-paginate-next'
 
 export default {
   components: {
     NavBar,
     FooterSection,
-    ProductCard
+    ProductCard,
+    paginate: Paginate
   },
 
   data() {
@@ -21,6 +23,8 @@ export default {
       products: [],
       isLoading: true,
       loadError: '',
+      currentPage: 1,
+      itemsPerPage: 12,
 
       toastVisible: false,
       toastMessage: '',
@@ -117,6 +121,37 @@ export default {
       }
 
       return list
+    },
+
+    paginatedProducts() {
+      const start = (this.currentPage - 1) * this.itemsPerPage
+      return this.filteredProducts.slice(start, start + this.itemsPerPage)
+    },
+
+    pageCount() {
+      return Math.max(1, Math.ceil(this.filteredProducts.length / this.itemsPerPage))
+    }
+  },
+
+  watch: {
+    searchQuery() {
+      this.currentPage = 1
+    },
+
+    activeCat() {
+      this.currentPage = 1
+    },
+
+    activePrice() {
+      this.currentPage = 1
+    },
+
+    activeSkin() {
+      this.currentPage = 1
+    },
+
+    sortBy() {
+      this.currentPage = 1
     }
   },
 
@@ -290,7 +325,7 @@ export default {
 
               <ProductCard
                 v-else
-                v-for="product in filteredProducts"
+                v-for="product in paginatedProducts"
                 :key="product.id"
                 :product="product"
                 @add-to-cart="addToCart"
@@ -300,6 +335,18 @@ export default {
                 No products match your search or filters.
               </p>
             </div>
+
+            <paginate
+              v-if="filteredProducts.length > itemsPerPage"
+              v-model="currentPage"
+              :click-handler="page => (currentPage = page)"
+              :container-class="'catalog-pagination'"
+              :page-count="pageCount"
+              :page-range="3"
+              :margin-pages="1"
+              :next-text="'Next'"
+              :prev-text="'Prev'"
+            />
           </div>
         </div>
       </section>
@@ -500,6 +547,48 @@ export default {
   grid-column: 1 / -1;
   padding: 3rem 1rem;
   text-align: center;
+}
+
+.catalog-pagination {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
+}
+
+.catalog-pagination :deep(li) {
+  list-style: none;
+}
+
+.catalog-pagination :deep(a) {
+  align-items: center;
+  background: white;
+  border: 1px solid var(--pink-200);
+  border-radius: 999px;
+  color: var(--pink-800);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 0.82rem;
+  font-weight: 800;
+  justify-content: center;
+  min-width: 2.2rem;
+  padding: 0.5rem 0.8rem;
+  text-decoration: none;
+}
+
+.catalog-pagination :deep(li.active a) {
+  background: var(--pink-800);
+  border-color: var(--pink-800);
+  color: white;
+}
+
+.catalog-pagination :deep(li.disabled a) {
+  cursor: not-allowed;
+  opacity: 0.45;
 }
 
 .cart-toast {

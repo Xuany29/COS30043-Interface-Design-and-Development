@@ -502,6 +502,7 @@ export default {
                   <p class="panel-kicker">Orders</p>
                   <h2>Recent Activity</h2>
                 </div>
+                <router-link v-if="orders.length" class="panel-link" to="/orders">View All Orders</router-link>
               </div>
 
               <p v-if="orderMessage" class="form-message success">{{ orderMessage }}</p>
@@ -889,7 +890,7 @@ button.panel-link {
   border-radius: 16px;
   display: grid;
   gap: 1rem;
-  grid-template-columns: 120px minmax(0, 1fr) max-content;
+  grid-template-columns: 170px minmax(0, 1fr) max-content;
   padding: 1rem;
 }
 

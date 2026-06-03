@@ -19,7 +19,6 @@
           <li><router-link to="/quiz" @click="menuOpen = false">Quiz</router-link></li>
           <li><router-link to="/skincare" @click="menuOpen = false">Skincare</router-link></li>
           <li><router-link to="/makeup" @click="menuOpen = false">Makeup</router-link></li>
-          <li><router-link to="/about" @click="menuOpen = false">About</router-link></li>
         </template>
       </ul>
 

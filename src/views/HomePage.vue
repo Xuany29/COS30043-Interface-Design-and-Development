@@ -72,7 +72,7 @@ export default {
                 </div>
                 <div class="row g-0">
                   <div class="col-12">
-                    <router-link to="/about" class="btn-outline">Our Story</router-link>
+                    <router-link to="/shop" class="btn-outline">Shop Routine Kits</router-link>
                   </div>
                 </div>
               </div>
@@ -88,29 +88,6 @@ export default {
                     <div>
                       <strong>Glass Skin</strong>
                       <span>Routine Kit</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="trust-section">
-        <div class="row g-0">
-          <div class="col-12">
-            <div class="section-inner">
-
-              <div class="row g-0">
-                <div class="col-12">
-                  <div class="trust-row">
-                    <div class="trust-item" v-for="t in trustItems" :key="t.label">
-                      <span class="trust-icon">{{ t.icon }}</span>
-                      <div>
-                        <strong>{{ t.value }}</strong>
-                        <span>{{ t.label }}</span>
-                      </div>
                     </div>
                   </div>
                 </div>

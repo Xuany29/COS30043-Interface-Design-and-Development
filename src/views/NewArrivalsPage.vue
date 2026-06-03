@@ -13,23 +13,11 @@ export default {
     paginate: Paginate
   },
 
-  props: {
-    category: {
-      type: String,
-      required: true
-    },
-    subtitle: {
-      type: String,
-      required: true
-    }
-  },
-
   data() {
     return {
       products: [],
       isLoading: true,
       loadError: '',
-      sortBy: 'featured',
       currentPage: 1,
       itemsPerPage: 12,
       toastVisible: false,
@@ -39,42 +27,19 @@ export default {
   },
 
   computed: {
-    sortedProducts() {
-      const list = [...this.products]
-
-      if (this.sortBy === 'low') {
-        list.sort((a, b) => a.price - b.price)
-      }
-
-      if (this.sortBy === 'high') {
-        list.sort((a, b) => b.price - a.price)
-      }
-
-      if (this.sortBy === 'newest') {
-        list.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-      }
-
-      return list
+    newProducts() {
+      return [...this.products]
+        .filter(product => product.isNew)
+        .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
     },
 
     paginatedProducts() {
       const start = (this.currentPage - 1) * this.itemsPerPage
-      return this.sortedProducts.slice(start, start + this.itemsPerPage)
+      return this.newProducts.slice(start, start + this.itemsPerPage)
     },
 
     pageCount() {
-      return Math.max(1, Math.ceil(this.sortedProducts.length / this.itemsPerPage))
-    }
-  },
-
-  watch: {
-    category() {
-      this.currentPage = 1
-      this.loadProducts()
-    },
-
-    sortBy() {
-      this.currentPage = 1
+      return Math.max(1, Math.ceil(this.newProducts.length / this.itemsPerPage))
     }
   },
 
@@ -84,11 +49,8 @@ export default {
 
   methods: {
     async loadProducts() {
-      this.isLoading = true
-      this.loadError = ''
-
       try {
-        const data = await apiRequest(`/products?category=${encodeURIComponent(this.category)}`)
+        const data = await apiRequest('/products')
         this.products = data.products
       } catch (error) {
         this.loadError = error.message
@@ -132,9 +94,7 @@ export default {
     showToast(message) {
       this.toastMessage = message
       this.toastVisible = true
-
       clearTimeout(this.toastTimer)
-
       this.toastTimer = setTimeout(() => {
         this.toastVisible = false
       }, 2200)
@@ -147,46 +107,29 @@ export default {
   <div class="page">
     <NavBar />
 
-    <main class="category-page">
-      <section class="category-hero">
-        <p class="hero-eyebrow">Blush Berry Edit</p>
-        <h1>{{ category }}</h1>
-        <p>{{ subtitle }}</p>
+    <main class="collection-page">
+      <section class="shop-hero">
+        <p class="hero-eyebrow">Fresh drops</p>
+        <h1 class="hero-title">New <em>Arrivals</em></h1>
+        <p class="hero-subtitle">Explore the latest Blush Berry products added to the shop.</p>
       </section>
 
-      <section class="category-content">
-        <div class="category-toolbar">
-          <p>{{ sortedProducts.length }} {{ category.toLowerCase() }} product{{ sortedProducts.length !== 1 ? 's' : '' }}</p>
-          <div class="sort-wrap">
-            <label for="category-sort">Sort by</label>
-            <select id="category-sort" v-model="sortBy">
-              <option value="featured">Featured</option>
-              <option value="newest">Newest</option>
-              <option value="low">Price: Low to High</option>
-              <option value="high">Price: High to Low</option>
-            </select>
-          </div>
-        </div>
+      <section class="collection-shell">
+        <p v-if="isLoading" class="empty-state">Loading new arrivals...</p>
+        <p v-else-if="loadError" class="empty-state">{{ loadError }}</p>
+        <p v-else-if="newProducts.length === 0" class="empty-state">No new arrivals yet.</p>
 
-        <div class="product-grid">
-          <p v-if="isLoading" class="empty-state">Loading {{ category.toLowerCase() }} products from MongoDB...</p>
-          <p v-else-if="loadError" class="empty-state">{{ loadError }}</p>
-
+        <div v-else class="product-grid">
           <ProductCard
-            v-else
             v-for="product in paginatedProducts"
             :key="product.id"
             :product="product"
             @add-to-cart="addToCart"
           />
-
-          <p v-if="!isLoading && !loadError && sortedProducts.length === 0" class="empty-state">
-            No {{ category.toLowerCase() }} products found.
-          </p>
         </div>
 
         <paginate
-          v-if="sortedProducts.length > itemsPerPage"
+          v-if="newProducts.length > itemsPerPage"
           v-model="currentPage"
           :click-handler="page => (currentPage = page)"
           :container-class="'catalog-pagination'"
@@ -199,28 +142,24 @@ export default {
       </section>
     </main>
 
-    <transition name="toast">
-      <div v-if="toastVisible" class="cart-toast">{{ toastMessage }}</div>
-    </transition>
-
+    <div v-if="toastVisible" class="toast">{{ toastMessage }}</div>
     <FooterSection />
   </div>
 </template>
 
 <style scoped>
 .page {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
   background: #fff8fb;
+  color: var(--text-primary);
   font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
 }
 
-.category-page {
-  flex: 1;
+.collection-page {
+  padding-bottom: 4rem;
 }
 
-.category-hero {
+.shop-hero {
   background: linear-gradient(135deg, #fbeef3 0%, #f5dde8 50%, #ecdceb 100%);
   padding: 6rem 1.5rem 3.5rem;
   text-align: center;
@@ -235,7 +174,7 @@ export default {
   text-transform: uppercase;
 }
 
-.category-hero h1 {
+.hero-title {
   color: var(--pink-800);
   font-family: 'Cormorant Garamond', serif;
   font-size: clamp(2rem, 5vw, 3.5rem);
@@ -244,58 +183,38 @@ export default {
   margin-bottom: 0.9rem;
 }
 
-.category-hero p:last-child {
+.hero-title em {
+  color: var(--pink-500);
+}
+
+.hero-subtitle {
   color: var(--text-secondary);
   line-height: 1.7;
   margin: 0 auto;
   max-width: 620px;
 }
 
-.category-content {
-  margin: 0 auto;
-  max-width: 1200px;
-  padding: 2rem 1.5rem 4rem;
-}
-
-.category-toolbar {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  justify-content: space-between;
-  margin-bottom: 1.25rem;
-}
-
-.category-toolbar p,
-.sort-wrap label {
+.empty-state {
   color: var(--text-muted);
-  font-size: 0.84rem;
 }
 
-.sort-wrap {
-  align-items: center;
-  display: flex;
-  gap: 0.5rem;
-}
-
-.sort-wrap select {
-  background: white;
-  border: 1px solid var(--pink-200);
-  border-radius: 999px;
-  color: var(--pink-800);
-  font: inherit;
-  padding: 0.4rem 0.85rem;
+.collection-shell {
+  margin: 0 auto;
+  max-width: 1280px;
+  min-height: 360px;
+  padding: 2rem 1rem 0;
 }
 
 .product-grid {
   display: grid;
   gap: 1.5rem;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .empty-state {
-  color: var(--text-muted);
-  grid-column: 1 / -1;
+  background: white;
+  border: 1px solid rgba(232, 121, 154, 0.18);
+  border-radius: 8px;
   padding: 3rem 1rem;
   text-align: center;
 }
@@ -342,50 +261,28 @@ export default {
   opacity: 0.45;
 }
 
-.cart-toast {
+.toast {
   background: var(--pink-800);
-  border-radius: 12px;
-  bottom: 1.25rem;
-  box-shadow: 0 6px 20px rgba(122, 31, 61, 0.25);
+  border-radius: 999px;
+  bottom: 1.5rem;
   color: white;
-  font-size: 0.82rem;
-  font-weight: 600;
-  padding: 0.65rem 1.2rem;
+  font-weight: 800;
+  left: 50%;
+  padding: 0.75rem 1.15rem;
   position: fixed;
-  right: 1.25rem;
-  z-index: 1000;
+  transform: translateX(-50%);
+  z-index: 1200;
 }
 
-.toast-enter-active,
-.toast-leave-active {
-  transition: all 0.3s ease;
-}
-
-.toast-enter-from,
-.toast-leave-to {
-  opacity: 0;
-  transform: translateY(12px);
-}
-
-@media (max-width: 1100px) {
+@media (max-width: 980px) {
   .product-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 680px) {
   .product-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 480px) {
-  .category-content {
-    padding: 1.25rem 1rem 3rem;
-  }
-
-  .product-grid {
-    gap: 0.85rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 </style>

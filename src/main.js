@@ -14,6 +14,8 @@ const router = createRouter({
     { path: '/', component: HomePage },
     // Add more routes as you build them:
     { path: '/shop', component: () => import('./views/ShopPage.vue') },
+    { path: '/new', component: () => import('./views/NewArrivalsPage.vue') },
+    { path: '/sale', component: () => import('./views/SalePage.vue') },
     { path: '/quiz', component: () => import('./views/SkinQuizPage.vue') },
     {
       path: '/skincare',
@@ -33,6 +35,9 @@ const router = createRouter({
     },
     { path: '/product/:id', component: () => import('./views/ProductDetailPage.vue') },
     { path: '/cart', component: () => import('./views/CartPage.vue') },
+    { path: '/orders', component: () => import('./views/MyOrdersPage.vue') },
+    { path: '/track', redirect: '/orders' },
+    { path: '/contact', component: () => import('./views/ContactPage.vue') },
     { path: '/login', component: () => import('./views/LoginPage.vue') },
     { path: '/register', component: () => import('./views/RegisterPage.vue') },
     { path: '/profile', component: () => import('./views/ProfilePage.vue') },
@@ -40,7 +45,6 @@ const router = createRouter({
     { path: '/admin/products', component: () => import('./views/AdminProductsPage.vue') },
     { path: '/admin/orders', component: () => import('./views/AdminOrdersPage.vue') },
     { path: '/account', redirect: '/profile' },
-    // { path: '/about', component: () => import('./views/AboutPage.vue') },
   ],
   scrollBehavior() {
     return { top: 0 }
