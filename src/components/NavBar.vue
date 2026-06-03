@@ -9,6 +9,7 @@
       <!-- Desktop Nav Links -->
       <ul class="nav-links" :class="{ open: menuOpen }">
         <template v-if="isAdmin">
+          <li><router-link to="/admin/analytics" @click="menuOpen = false">Analytics</router-link></li>
           <li><router-link to="/admin/products" @click="menuOpen = false">Products</router-link></li>
           <li><router-link to="/admin/orders" @click="menuOpen = false">Orders</router-link></li>
         </template>

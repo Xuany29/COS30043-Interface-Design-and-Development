@@ -176,6 +176,7 @@ export default {
       form: emptyForm(),
       searchTerm: '',
       activeCatalogCategory: 'all',
+      activeCatalogFilter: 'all',
       isLoading: true,
       isSaving: false,
       loadError: '',
@@ -222,11 +223,15 @@ export default {
 
       return this.products.filter(product => {
         const categoryMatch = this.activeCatalogCategory === 'all' || product.category === this.activeCatalogCategory
+        const summaryFilterMatch = this.activeCatalogFilter === 'all'
+          || (this.activeCatalogFilter === 'low-stock' && this.productTotalStock(product) <= 5)
+          || (this.activeCatalogFilter === 'featured' && (product.isFeatured || product.isBestseller))
+
         return [product.brand, product.name, product.category, product.subCategory]
           .filter(Boolean)
           .join(' ')
           .toLowerCase()
-          .includes(search) && categoryMatch
+          .includes(search) && categoryMatch && summaryFilterMatch
       })
     },
 
@@ -293,6 +298,10 @@ export default {
     },
 
     activeCatalogCategory() {
+      this.currentPage = 1
+    },
+
+    activeCatalogFilter() {
       this.currentPage = 1
     }
   },
@@ -590,6 +599,16 @@ export default {
       this.form.variants = []
     },
 
+    setCatalogFilter(filter) {
+      this.activeCatalogFilter = this.activeCatalogFilter === filter ? 'all' : filter
+      this.currentPage = 1
+    },
+
+    clearCatalogFilter() {
+      this.activeCatalogFilter = 'all'
+      this.currentPage = 1
+    },
+
     showNotice(message, type = 'success') {
       this.notice = message
       this.noticeType = type
@@ -614,18 +633,33 @@ export default {
       <p v-if="accessError" class="access-panel">{{ accessError }}</p>
 
       <section v-else class="metric-row" aria-label="Product summary">
-        <div class="metric">
+        <button
+          class="metric metric-button"
+          :class="{ active: activeCatalogFilter === 'all' }"
+          type="button"
+          @click="setCatalogFilter('all')"
+        >
           <span>{{ totalProducts }}</span>
           <p>Total products</p>
-        </div>
-        <div class="metric">
+        </button>
+        <button
+          class="metric metric-button"
+          :class="{ active: activeCatalogFilter === 'low-stock' }"
+          type="button"
+          @click="setCatalogFilter('low-stock')"
+        >
           <span>{{ lowStockProducts }}</span>
           <p>Low stock</p>
-        </div>
-        <div class="metric">
+        </button>
+        <button
+          class="metric metric-button"
+          :class="{ active: activeCatalogFilter === 'featured' }"
+          type="button"
+          @click="setCatalogFilter('featured')"
+        >
           <span>{{ featuredProducts }}</span>
           <p>Featured picks</p>
-        </div>
+        </button>
       </section>
 
       <section v-if="!accessError" class="admin-grid">
@@ -838,6 +872,14 @@ export default {
           <div class="list-toolbar">
             <h2>Catalog</h2>
             <div class="catalog-controls">
+              <button
+                v-if="activeCatalogFilter !== 'all'"
+                class="filter-chip"
+                type="button"
+                @click="clearCatalogFilter"
+              >
+                {{ activeCatalogFilter === 'low-stock' ? 'Low stock' : 'Featured picks' }} x
+              </button>
               <select v-model="activeCatalogCategory" aria-label="Filter catalog by category">
                 <option value="all">All categories</option>
                 <option v-for="category in categoryOptions" :key="category" :value="category">{{ category }}</option>
@@ -1017,7 +1059,25 @@ h2 {
 }
 
 .metric {
+  text-align: left;
   padding: 1.1rem;
+}
+
+.metric-button {
+  cursor: pointer;
+  font: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.metric-button:hover,
+.metric-button.active {
+  border-color: rgba(232, 121, 154, 0.42);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.metric-button.active {
+  background: #fffafd;
 }
 
 .metric span {
@@ -1333,6 +1393,20 @@ textarea:focus {
   align-items: center;
   display: flex;
   gap: 0.65rem;
+}
+
+.filter-chip {
+  background: var(--pink-800);
+  border: 1px solid var(--pink-800);
+  border-radius: 999px;
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 800;
+  min-height: 42px;
+  padding: 0.55rem 0.8rem;
+  white-space: nowrap;
 }
 
 .catalog-controls select {

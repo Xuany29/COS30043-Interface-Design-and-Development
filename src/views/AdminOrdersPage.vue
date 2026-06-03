@@ -72,10 +72,20 @@ export default {
       return this.orders.filter(order => ['processing', 'packed', 'shipped'].includes(order.status)).length
     },
 
-    revenueTotal() {
+    todaysOrders() {
+      const now = new Date()
+      const day = now.getDate()
+      const month = now.getMonth()
+      const year = now.getFullYear()
+
       return this.orders
-        .filter(order => order.status !== 'cancelled')
-        .reduce((sum, order) => sum + Number(order.total || 0), 0)
+        .filter(order => {
+          const orderDate = new Date(order.date)
+
+          return orderDate.getDate() === day
+            && orderDate.getMonth() === month
+            && orderDate.getFullYear() === year
+        }).length
     }
   },
 
@@ -219,8 +229,8 @@ export default {
             <p>Active orders</p>
           </div>
           <div class="metric">
-            <span>{{ formatMoney(revenueTotal) }}</span>
-            <p>Revenue</p>
+            <span>{{ todaysOrders }}</span>
+            <p>Orders today</p>
           </div>
         </section>
 
@@ -325,8 +335,8 @@ export default {
 
 .admin-page {
   margin: 0 auto;
-  max-width: 1240px;
-  padding: 7rem 1.5rem 4rem;
+  max-width: 1440px;
+  padding: 7rem 0.75rem 4rem;
 }
 
 .admin-header,

@@ -36,6 +36,7 @@ const router = createRouter({
     { path: '/login', component: () => import('./views/LoginPage.vue') },
     { path: '/register', component: () => import('./views/RegisterPage.vue') },
     { path: '/profile', component: () => import('./views/ProfilePage.vue') },
+    { path: '/admin/analytics', component: () => import('./views/AdminAnalyticsPage.vue') },
     { path: '/admin/products', component: () => import('./views/AdminProductsPage.vue') },
     { path: '/admin/orders', component: () => import('./views/AdminOrdersPage.vue') },
     { path: '/account', redirect: '/profile' },
