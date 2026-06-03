@@ -18,7 +18,6 @@ export default {
           title: 'Help',
           links: [
             { label: 'Track Order', to: '/orders' },
-            { label: 'Contact Us', to: '/contact' },
             { label: 'Log In', to: '/login' },
           ]
         }

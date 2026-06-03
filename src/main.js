@@ -37,7 +37,6 @@ const router = createRouter({
     { path: '/cart', component: () => import('./views/CartPage.vue') },
     { path: '/orders', component: () => import('./views/MyOrdersPage.vue') },
     { path: '/track', redirect: '/orders' },
-    { path: '/contact', component: () => import('./views/ContactPage.vue') },
     { path: '/login', component: () => import('./views/LoginPage.vue') },
     { path: '/register', component: () => import('./views/RegisterPage.vue') },
     { path: '/profile', component: () => import('./views/ProfilePage.vue') },
