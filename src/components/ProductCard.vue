@@ -6,7 +6,7 @@ export default {
       required: true,
     },
   },
-  emits: ['add-to-cart', 'toggle-wishlist'],
+  emits: ['add-to-cart'],
   computed: {
     price() {
       return Number(this.product.price || 0).toFixed(2)
@@ -45,7 +45,6 @@ export default {
         <span v-if="product.discount" class="badge badge-sale">-{{ product.discount }}%</span>
       </div>
       <div class="product-actions">
-        <button class="action-btn" aria-label="Add to Wishlist" @click.stop="$emit('toggle-wishlist', product)">Wish</button>
         <button type="button" class="action-btn add-cart" aria-label="Add to Cart" @click.stop="$emit('add-to-cart', product)">
           + Cart
         </button>

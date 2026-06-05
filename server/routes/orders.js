@@ -109,15 +109,18 @@ router.patch('/admin/:id/status', requireAdmin, async (req, res) => {
       return res.status(400).json({ message: 'Please choose a valid order status.' });
     }
 
-    const order = await Order.findByIdAndUpdate(
-      req.params.id,
-      { status },
-      { returnDocument: 'after', runValidators: true },
-    ).populate('user', 'firstName lastName email');
+    const order = await Order.findById(req.params.id).populate('user', 'firstName lastName email');
 
     if (!order) {
       return res.status(404).json({ message: 'Order not found.' });
     }
+
+    if (order.status === 'cancelled') {
+      return res.status(400).json({ message: 'Cancelled orders cannot be updated.' });
+    }
+
+    order.status = status;
+    await order.save();
 
     return res.json({
       message: 'Order status updated.',

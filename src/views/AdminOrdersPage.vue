@@ -150,6 +150,10 @@ export default {
 
     async updateStatus(order, status) {
       if (order.status === status) return
+      if (order.status === 'cancelled') {
+        this.showNotice('Cancelled orders cannot be updated.', 'error')
+        return
+      }
 
       this.isUpdating = order.id
       this.notice = ''
@@ -305,7 +309,7 @@ export default {
                   <span>Status</span>
                   <select
                     :value="order.status"
-                    :disabled="isUpdating === order.id"
+                    :disabled="isUpdating === order.id || order.status === 'cancelled'"
                     @change="updateStatus(order, $event.target.value)"
                   >
                     <option v-for="option in statusOptions" :key="option.value" :value="option.value">
