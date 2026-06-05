@@ -603,14 +603,51 @@ dd {
 
 @media (max-width: 680px) {
   .admin-page {
-    padding: 6rem 1rem 3rem;
+    padding: 5.5rem 0.75rem 2.5rem;
   }
 
   .admin-header,
-  .toolbar,
-  .ranking-item {
+  .toolbar {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .admin-header {
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .metric-row {
+    gap: 0.65rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .metric,
+  .analytics-panel {
+    padding: 0.85rem;
+  }
+
+  .toolbar {
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .analytics-grid,
+  .ranking-list {
+    gap: 0.65rem;
+  }
+
+  .top-product {
+    gap: 0.75rem;
+    padding: 0.85rem;
+  }
+
+  .ranking-item {
+    align-items: stretch;
+    display: grid;
+    gap: 0.7rem;
+    grid-template-columns: auto minmax(0, 1fr);
+    padding: 0.75rem;
   }
 
   .period-tabs {
@@ -624,7 +661,17 @@ dd {
   .bar-cell,
   .product-cell,
   .sales-cell {
+    flex: none;
     width: 100%;
+  }
+
+  .product-cell {
+    grid-column: 2;
+  }
+
+  .bar-cell,
+  .sales-cell {
+    grid-column: 1 / -1;
   }
 
   .sales-cell {
