@@ -87,8 +87,8 @@ function productPayload(body) {
 }
 
 function validateProductPayload(payload) {
-  if (!payload.brand || !payload.name || !payload.category) {
-    return 'Brand, name, and category are required.';
+  if (!payload.brand || !payload.name || !payload.category || !payload.subCategory) {
+    return 'Brand, name, category, and subcategory are required.';
   }
 
   if (!Number.isFinite(payload.price) || payload.price < 0) {
@@ -97,6 +97,26 @@ function validateProductPayload(payload) {
 
   if (!Number.isFinite(payload.stock) || payload.stock < 0) {
     return 'Stock must be a valid number.';
+  }
+
+  if (!payload.image && !payload.imageUrl && !payload.images.length) {
+    return 'Product image is required.';
+  }
+
+  if (!payload.description) {
+    return 'Description is required.';
+  }
+
+  if (!payload.price_range_tag) {
+    return 'Price range is required.';
+  }
+
+  if (payload.category !== 'Tools' && payload.skin.length === 0) {
+    return 'Select at least one skin type.';
+  }
+
+  if (payload.category !== 'Tools' && payload.concerns_addressed.length === 0) {
+    return 'Select at least one concern.';
   }
 
   return '';

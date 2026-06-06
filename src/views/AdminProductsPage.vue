@@ -191,7 +191,7 @@ export default {
       concernOptions: ['acne', 'pigmentation', 'wrinkles', 'dullness', 'pores', 'hydration', 'redness'],
       skinToneOptions: ['fair', 'medium', 'tan', 'deep'],
       priceRangeOptions: [
-        { label: 'None', value: '' },
+        { label: 'Select price range', value: '' },
         { label: 'Low', value: 'low' },
         { label: 'Mid', value: 'mid' },
         { label: 'High', value: 'high' }
@@ -423,9 +423,52 @@ export default {
       }
     },
 
+    validateProductForm() {
+      const requiredTextFields = [
+        ['Brand', this.form.brand],
+        ['Name', this.form.name],
+        ['Category', this.form.category],
+        ['Subcategory', this.form.subCategory],
+        ['Product image', this.form.image],
+        ['Description', this.form.description],
+        ['Price range', this.form.price_range_tag]
+      ]
+
+      const missingField = requiredTextFields.find(([, value]) => !String(value || '').trim())
+
+      if (missingField) {
+        return `${missingField[0]} is required.`
+      }
+
+      if (this.form.price === '' || !Number.isFinite(Number(this.form.price)) || Number(this.form.price) < 0) {
+        return 'Price is required and must be a valid number.'
+      }
+
+      if (this.form.stock === '' || !Number.isFinite(Number(this.form.stock)) || Number(this.form.stock) < 0) {
+        return 'Stock is required and must be a valid number.'
+      }
+
+      if (!this.isToolsCategory && this.form.skin.length === 0) {
+        return 'Select at least one skin type.'
+      }
+
+      if (!this.isToolsCategory && this.form.concerns_addressed.length === 0) {
+        return 'Select at least one concern.'
+      }
+
+      return ''
+    },
+
     async saveProduct() {
-      this.isSaving = true
       this.notice = ''
+      const validationError = this.validateProductForm()
+
+      if (validationError) {
+        this.showNotice(validationError, 'error')
+        return
+      }
+
+      this.isSaving = true
 
       try {
         const path = this.isEditing ? `/products/${this.form.id}` : '/products'
@@ -688,7 +731,7 @@ export default {
             </label>
             <label>
               <span>Subcategory</span>
-              <input v-model.trim="form.subCategory" type="text" />
+              <input v-model.trim="form.subCategory" required type="text" />
             </label>
             <label>
               <span>Price</span>
@@ -722,6 +765,7 @@ export default {
               <input
                 :value="imageInputText"
                 placeholder="Enter image URL or choose file"
+                required
                 type="text"
                 @input="handleImageTextInput"
               />
@@ -740,7 +784,7 @@ export default {
 
           <label>
             <span>Description</span>
-            <textarea v-model.trim="form.description" rows="4"></textarea>
+            <textarea v-model.trim="form.description" required rows="4"></textarea>
           </label>
 
           <label>
@@ -775,8 +819,8 @@ export default {
           <div class="field-grid">
             <label class="wide-field">
               <span>Price range tag</span>
-              <select v-model="form.price_range_tag">
-                <option v-for="option in priceRangeOptions" :key="option.value" :value="option.value">
+              <select v-model="form.price_range_tag" required>
+                <option v-for="option in priceRangeOptions" :key="option.value" :disabled="!option.value" :value="option.value">
                   {{ option.label }}
                 </option>
               </select>
