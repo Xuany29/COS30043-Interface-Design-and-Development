@@ -1,62 +1,130 @@
-# COS30043-Interface-Design-and-Development
-# Project
+# BlushBerry Korean Beauty E-Commerce Platform
 
-This template should help get you started developing with Vue 3 in Vite.
+This project is developed for **COS30043 Interface Design and Development**. BlushBerry is a full-stack e-commerce web application for Korean skincare and makeup products. It includes customer shopping features, a skincare quiz, account management, checkout, order tracking, and administrator dashboards for product and order management.
 
-## Recommended IDE Setup
+## How to Deploy and Run the Web App on a Laptop
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+Follow these steps to run the application locally.
 
-## Recommended Browser Setup
+## 1. Install Required Software
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+Make sure the laptop has the following installed:
 
-## Customize configuration
+- Node.js version 20.19.0 or above
+- npm
+- A modern web browser such as Chrome, Edge, or Firefox
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+Check Node.js and npm:
 
-## Project Setup
+```sh
+node -v
+npm -v
+```
+
+## 2. Open the Project Folder
+
+Open a terminal or command prompt and go to the project folder:
+
+```sh
+cd COS30043-Interface-Design-and-Development
+```
+
+If the folder is in a different location, use the correct path to the project folder.
+
+## 3. Install Dependencies
+
+Run:
 
 ```sh
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+This installs all required frontend and backend packages.
 
-```sh
-npm run dev
+## 4. Check the Environment File
+
+The project uses a `.env.local` file in the root folder to connect the frontend, backend, and database.
+
+Make sure `.env.local` exists in the submitted project folder. It should contain values similar to:
+
+```env
+MONGODB_URI=provided_database_connection_string
+JWT_SECRET=provided_jwt_secret
+CLIENT_ORIGIN=http://localhost:5173
+API_PORT=5000
 ```
 
-### Connect MongoDB Atlas REST API
+The database connection is already configured by the developer. The lecturer does not need to create or manage a MongoDB Atlas database.
 
-1. Copy `.env.example` into `.env.local`.
-2. Replace `MONGODB_URI` with your MongoDB Atlas connection string.
-3. Replace `JWT_SECRET` with a long random value.
-4. In MongoDB Atlas, add your current IP address under **Network Access**.
-5. Start the frontend and API together:
+## 5. Start the Application
+
+Run the frontend and backend together:
 
 ```sh
 npm run dev:full
 ```
 
-The REST API runs on `http://localhost:5000`:
+After it starts successfully, open this link in a browser:
 
-- `GET /api/health`
-- `POST /api/auth/register`
-- `POST /api/auth/login`
+```text
+http://localhost:5173
+```
 
-### Compile and Minify for Production
+The backend API runs at:
+
+```text
+http://localhost:5000
+```
+
+## 6. Build for Production
+
+To create a production build:
 
 ```sh
 npm run build
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+To run the backend server:
+
+```sh
+npm run server
+```
+
+The production build will be generated in the `dist` folder.
+
+## Available Scripts
+
+Run frontend only:
+
+```sh
+npm run dev
+```
+
+Run backend only:
+
+```sh
+npm run server:dev
+```
+
+Run frontend and backend together:
+
+```sh
+npm run dev:full
+```
+
+Build the project:
+
+```sh
+npm run build
+```
+
+Preview the production build:
+
+```sh
+npm run preview
+```
+
+Run linting:
 
 ```sh
 npm run lint
